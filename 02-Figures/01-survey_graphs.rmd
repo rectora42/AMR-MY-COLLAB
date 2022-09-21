@@ -1,0 +1,41 @@
+---
+title: "surveygraphs"
+output: pdf_document
+date: "2022-09-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+SimulatedSurvey_T1 <- readRDS("../01-SimulateSurveyData/Simulated_5Q_T1.rds")
+SimulatedSurvey_T2 <- readRDS("../01-SimulateSurveyData/Simulated_5Q_T2.rds")
+combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "timepoint")
+```
+
+```{r}
+combined_data$timepoint <- factor(combined_data$timepoint, levels = c("1", "2"), labels = c("Baseline", "18-Month"))
+```
+
+```{r}
+#TODO:
+# reformat tally data
+```
+
+```{r}
+# test values
+mydata <- combined_data
+mytitle <- "Simulated Survey Data"
+myoutfile <- "simulated_bar_graph"
+
+survey_bar_graph <- function(mydata, mytitle, myoutfile){
+  fig1 <- ggplot(mydata, aes(x=question_number, y=response_count))
+}
+```
+
