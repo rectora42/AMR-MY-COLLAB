@@ -52,6 +52,8 @@ saveRDS(SimulatedSurvey_T2, "./Simulated_5Q_T2.rds")
 
 ```{r}
 combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "timepoint")
+combined_data <- combined_data %>% 
+  mutate_if(is.character, list(~na_if(.," ")))
 first_table <- table1(~Q1+Q2+Q3+Q4+Q5|timepoint, data = combined_data, output="latex")
 t1flex(first_table) %>%
   padding(padding = 0, part = "all") %>% 

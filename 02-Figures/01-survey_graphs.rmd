@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(dplyr)
+library(tidyverse)
 library(ggplot2)
 ```
 
@@ -21,21 +22,49 @@ combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "
 
 ```{r}
 combined_data$timepoint <- factor(combined_data$timepoint, levels = c("1", "2"), labels = c("Baseline", "18-Month"))
+combined_data <- combined_data %>% 
+  mutate_if(is.character, list(~na_if(.," ")))
 ```
 
 ```{r}
 #TODO:
 # reformat tally data
+combined_data_long <- combined_data %>%
+  pivot_longer(cols = c("Q1", "Q2", "Q3", "Q4", "Q5"), names_to = "q_number", values_to = "response")
+
+combined_data_tally <- combined_data_long %>%
+  group_by(timepoint, q_number) %>%
+  tally()
+
+response_tally <- combined_data_long %>%
+  group_by(timepoint, q_number, response) %>%
+  tally() %>%
+  mutate(response_count = n) %>%
+  dplyr::select(-n)
+
+survey_tally <- merge(combined_data_tally, response_tally, by = c("timepoint", "q_number"))
 ```
 
 ```{r}
 # test values
-mydata <- combined_data
+mydata <- survey_tally
 mytitle <- "Simulated Survey Data"
 myoutfile <- "simulated_bar_graph"
 
 survey_bar_graph <- function(mydata, mytitle, myoutfile){
-  fig1 <- ggplot(mydata, aes(x=question_number, y=response_count))
+  fig1 <- ggplot(mydata, aes(fill=response, x=timepoint, y=response_count)) +
+    geom_bar(position = "fill", stat = "identity") +
+    scale_fill_manual("Response", values = c("Strongly Agree" = "#266141",# dark green
+                                              "Agree" = "#c2db6f", # Lime Green
+                                              "Disagree" = "#042b48",# dark blue
+                                              "Strongly Disagree" = "#f36d21", # Dark Orange
+                                              "Do Not Have" = "#328f44")) + # Green
+    facet_wrap(~as.factor(q_number))
+    
+  return(fig1)
 }
+
+survey_bar_graph(mydata = survey_tally, mytitle = "Simulated Survey Data", myoutfile = "simulated_bar_graph")
+
 ```
 
