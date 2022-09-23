@@ -1,13 +1,23 @@
 ---
 title: "Simulate Survey Data"
-subtitle: "5 Questions, 2 Timepoints"
 author: "Alison Rector"
 date: "2022-09-21"
-output: pdf_document
+output:
+  word_document: default
+  pdf_document: default
+subtitle: 5 Questions, 2 Timepoints
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages("flextable")
+#install.packages("table1")
+library(flextable)
+library(table1)
+library(dplyr)
 ```
 
 ```{r}
@@ -40,6 +50,19 @@ saveRDS(SimulatedSurvey_T2, "./Simulated_5Q_T2.rds")
 ```
 
 ```{r}
+<<<<<<< HEAD
 testing line
+=======
+combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "timepoint")
+first_table <- table1(~Q1+Q2+Q3+Q4+Q5|timepoint, data = combined_data, output="latex")
+t1flex(first_table) %>%
+  padding(padding = 0, part = "all") %>% 
+  valign(valign="top", part="header")%>%
+  autofit()%>% 
+  fit_to_width(7)%>%
+  fontsize(size=10, part="header")%>%
+  fontsize(size=10)%>%
+  add_header_lines("Summary of Survey Results by Timepoint")
+>>>>>>> d698cfd2e63f278b7ca2de09f8b52a074b53fa4c
 ```
 
