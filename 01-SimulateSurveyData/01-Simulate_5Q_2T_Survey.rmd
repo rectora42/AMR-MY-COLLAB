@@ -13,16 +13,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+# install packages
 #install.packages("flextable")
 #install.packages("table1")
 library(flextable)
 library(table1)
 library(dplyr)
-##testing comment
 ```
 
 ```{r}
-
 # Create a list of survey responses
 Survey_Responses_T1<-c("Strongly Agree", "Agree", "Disagree", "Disagree", "Strongly Disagree", "Do Not Have", " ")
 
@@ -51,12 +50,14 @@ saveRDS(SimulatedSurvey_T2, "./Simulated_5Q_T2.rds")
 ```
 
 ```{r}
-<<<<<<< HEAD
-testing line
-=======
+# combine datasets and clean NA values
 combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "timepoint")
 combined_data <- combined_data %>% 
   mutate_if(is.character, list(~na_if(.," ")))
+```
+
+```{r}
+# make table 1
 first_table <- table1(~Q1+Q2+Q3+Q4+Q5|timepoint, data = combined_data, output="latex")
 t1flex(first_table) %>%
   padding(padding = 0, part = "all") %>% 
@@ -66,6 +67,5 @@ t1flex(first_table) %>%
   fontsize(size=10, part="header")%>%
   fontsize(size=10)%>%
   add_header_lines("Summary of Survey Results by Timepoint")
->>>>>>> d698cfd2e63f278b7ca2de09f8b52a074b53fa4c
 ```
 

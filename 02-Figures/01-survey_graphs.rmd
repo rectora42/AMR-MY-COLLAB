@@ -9,26 +9,28 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
+# install packages
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
 ```
 
 ```{r}
+# import dataset
 SimulatedSurvey_T1 <- readRDS("../01-SimulateSurveyData/Simulated_5Q_T1.rds")
 SimulatedSurvey_T2 <- readRDS("../01-SimulateSurveyData/Simulated_5Q_T2.rds")
 combined_data <- bind_rows(list(SimulatedSurvey_T1, SimulatedSurvey_T2), .id = "timepoint")
 ```
 
 ```{r}
+# combine dataset and clean NA values
 combined_data$timepoint <- factor(combined_data$timepoint, levels = c("1", "2"), labels = c("Baseline", "18-Month"))
 combined_data <- combined_data %>% 
   mutate_if(is.character, list(~na_if(.," ")))
 ```
 
 ```{r}
-#TODO:
-# reformat tally data
+# reformat and tally data
 combined_data_long <- combined_data %>%
   pivot_longer(cols = c("Q1", "Q2", "Q3", "Q4", "Q5"), names_to = "q_number", values_to = "response")
 
@@ -54,16 +56,19 @@ myoutfile <- "simulated_bar_graph"
 survey_bar_graph <- function(mydata, mytitle, myoutfile){
   fig1 <- ggplot(mydata, aes(fill=response, x=timepoint, y=response_count)) +
     geom_bar(position = "fill", stat = "identity") +
+    ggtitle("Response distribution for each question in each time point") + 
+    xlab("Time point (Baseline or 18-Month)") + ylab("Percentage of Response(%)") +
     scale_fill_manual("Response", values = c("Strongly Agree" = "#266141",# dark green
                                               "Agree" = "#c2db6f", # Lime Green
                                               "Disagree" = "#042b48",# dark blue
                                               "Strongly Disagree" = "#f36d21", # Dark Orange
                                               "Do Not Have" = "#328f44")) + # Green
-    facet_wrap(~as.factor(q_number))
+    facet_wrap(~as.factor(q_number), nrow = 1)
     
   return(fig1)
 }
 
+par(mfrow=c(1,5))
 survey_bar_graph(mydata = survey_tally, mytitle = "Simulated Survey Data", myoutfile = "simulated_bar_graph")
 
 ```
