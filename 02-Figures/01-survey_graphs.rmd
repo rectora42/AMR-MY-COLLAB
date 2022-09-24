@@ -46,7 +46,7 @@ survey_tally <- merge(combined_data_tally, response_tally, by = c("timepoint", "
 ```
 
 ```{r}
-# test values
+# creating function to generate bar chart
 mydata <- survey_tally
 mytitle <- "Simulated Survey Data"
 myoutfile <- "simulated_bar_graph"
@@ -65,6 +65,5 @@ survey_bar_graph <- function(mydata, mytitle, myoutfile){
 }
 
 survey_bar_graph(mydata = survey_tally, mytitle = "Simulated Survey Data", myoutfile = "simulated_bar_graph")
-
 ```
 
